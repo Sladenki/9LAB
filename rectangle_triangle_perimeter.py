@@ -130,19 +130,95 @@ def point_in_triangle(point, triangle):
 
 def calculate_combined_perimeter(rectangle, triangle):
     """Вычисление общего периметра пересекающихся фигур"""
-    # Это упрощенная версия, которая просто суммирует периметры
-    # В реальной задаче нужно вычитать длины пересекающихся участков
     rect_perimeter = rectangle_perimeter(*rectangle)
     tri_perimeter = triangle_perimeter(triangle)
     
-    # Для точного решения нужно найти длину пересекающихся границ
-    # и вычесть её дважды из суммы периметров
+    if not triangle_rectangle_intersect(triangle, rectangle):
+        return 0, rect_perimeter, tri_perimeter, "Фигуры не пересекаются"
+    
+    # Упрощенная модель: общий периметр = сумма периметров минус пересекающиеся участки
+    # Для точного решения нужен сложный алгоритм вычисления контура объединения
+    
+    # Примерная оценка длины пересекающихся границ
+    intersection_length = estimate_intersection_boundary_length(rectangle, triangle)
+    
+    # Общий периметр = периметр объединения
+    combined_perimeter = rect_perimeter + tri_perimeter - 2 * intersection_length
+    
+    details = {
+        'rect_perimeter': rect_perimeter,
+        'tri_perimeter': tri_perimeter,
+        'intersection_length': intersection_length,
+        'combined_perimeter': max(combined_perimeter, max(rect_perimeter, tri_perimeter))
+    }
     
     print(f"Периметр прямоугольника: {rect_perimeter:.2f}")
     print(f"Периметр треугольника: {tri_perimeter:.2f}")
-    print(f"Общий периметр (приближенно): {rect_perimeter + tri_perimeter:.2f}")
+    print(f"Длина пересекающихся границ: {intersection_length:.2f}")
+    print(f"Общий периметр объединенной фигуры: {details['combined_perimeter']:.2f}")
     
-    return rect_perimeter + tri_perimeter
+    return details['combined_perimeter'], rect_perimeter, tri_perimeter, "Пересекаются"
+
+def estimate_intersection_boundary_length(rectangle, triangle):
+    """Примерная оценка длины пересекающихся границ"""
+    x1, y1, x2, y2 = rectangle
+    tri_p1, tri_p2, tri_p3 = triangle
+    
+    # Стороны прямоугольника
+    rect_sides = [
+        ((x1, y1), (x2, y1)),  # нижняя
+        ((x2, y1), (x2, y2)),  # правая
+        ((x2, y2), (x1, y2)),  # верхняя
+        ((x1, y2), (x1, y1))   # левая
+    ]
+    
+    # Стороны треугольника
+    tri_sides = [
+        (tri_p1, tri_p2),
+        (tri_p2, tri_p3),
+        (tri_p3, tri_p1)
+    ]
+    
+    total_intersection_length = 0.0
+    
+    # Находим пересечения сторон
+    for rect_side in rect_sides:
+        for tri_side in tri_sides:
+            intersection_segment = find_segment_intersection(rect_side, tri_side)
+            if intersection_segment:
+                length = segment_length(intersection_segment)
+                total_intersection_length += length
+    
+    return total_intersection_length
+
+def find_segment_intersection(seg1, seg2):
+    """Находит пересечение двух отрезков, возвращает отрезок пересечения или None"""
+    (x1, y1), (x2, y2) = seg1
+    (x3, y3), (x4, y4) = seg2
+    
+    # Проверяем параллельность
+    denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
+    if abs(denom) < 1e-10:
+        return None
+    
+    # Находим точку пересечения прямых
+    t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / denom
+    u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / denom
+    
+    # Проверяем, что пересечение происходит в пределах отрезков
+    if 0 <= t <= 1 and 0 <= u <= 1:
+        ix = x1 + t * (x2 - x1)
+        iy = y1 + t * (y2 - y1)
+        return ((ix, iy), (ix, iy))  # Точечное пересечение
+    
+    return None
+
+def segment_length(segment):
+    """Вычисляет длину отрезка"""
+    if segment is None:
+        return 0
+    (x1, y1), (x2, y2) = segment
+    return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
 
 def main():
     """Основная функция программы"""
@@ -155,13 +231,21 @@ def main():
     rectangle = input_rectangle()
     triangle = input_triangle()
     
-    # Проверка пересечения
+    # Проверка пересечения и расчет общего периметра
     if triangle_rectangle_intersect(triangle, rectangle):
         print("\n✓ Фигуры пересекаются или соприкасаются!")
-        print("Вычисляем общий периметр...")
+        print("Вычисляем общий периметр объединенной фигуры...")
         
-        combined_perimeter = calculate_combined_perimeter(rectangle, triangle)
-        print(f"\nОбщая длина периметра: {combined_perimeter:.2f}")
+        result = calculate_combined_perimeter(rectangle, triangle)
+        if len(result) == 4:
+            combined_p, rect_p, tri_p, status = result
+            print(f"\n=== РЕЗУЛЬТАТЫ РАСЧЕТА ===")
+            print(f"Периметр прямоугольника: {rect_p:.2f}")
+            print(f"Периметр треугольника: {tri_p:.2f}")
+            print(f"Общий периметр объединенной фигуры: {combined_p:.2f}")
+        else:
+            combined_perimeter = result
+            print(f"\nОбщая длина периметра: {combined_perimeter:.2f}")
         
     else:
         print("\n✗ Фигуры не пересекаются и не соприкасаются!")

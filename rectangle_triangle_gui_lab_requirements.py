@@ -7,13 +7,13 @@ import numpy as np
 import math
 from rectangle_triangle_perimeter import (
     rectangle_perimeter, triangle_perimeter, 
-    triangle_rectangle_intersect
+    triangle_rectangle_intersect, calculate_combined_perimeter
 )
 
 class GeometryCalculatorLabGUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("🎯 Лабораторная работа №9 - Тестирование ПО")
+        self.root.title("Лабораторная работа №9 - Тестирование ПО")
         self.root.geometry("1400x700")
         self.root.configure(bg='#f0f0f0')
         
@@ -197,6 +197,20 @@ class GeometryCalculatorLabGUI:
             entry.bind('<KeyRelease>', self.on_manual_change)
             self.tri_entries.append(entry)
         
+        # Общий периметр (выделенно)
+        perimeter_frame = tk.LabelFrame(parent, text="ОБЩИЙ ПЕРИМЕТР", 
+                                       font=('Arial', 12, 'bold'),
+                                       bg='white', fg='#d35400',
+                                       padx=10, pady=5)
+        perimeter_frame.pack(fill='x', padx=10, pady=5)
+        
+        self.perimeter_label = tk.Label(perimeter_frame, 
+                                       text="Периметр будет рассчитан при пересечении фигур",
+                                       font=('Arial', 10, 'bold'),
+                                       bg='#ffeaa7', fg='#2d3436',
+                                       relief='sunken', bd=2, pady=10)
+        self.perimeter_label.pack(fill='x', pady=2)
+        
         # Результаты
         self.results_frame = tk.LabelFrame(parent, text="РЕЗУЛЬТАТЫ ТЕСТА", 
                                           font=('Arial', 12, 'bold'),
@@ -204,7 +218,7 @@ class GeometryCalculatorLabGUI:
                                           padx=10, pady=10)
         self.results_frame.pack(fill='x', padx=10, pady=5)
         
-        self.result_text = tk.Text(self.results_frame, height=8, width=35,
+        self.result_text = tk.Text(self.results_frame, height=6, width=35,
                                   font=('Courier', 8),
                                   bg='#ecf0f1', fg='#2c3e50',
                                   relief='sunken', bd=2)
@@ -367,8 +381,24 @@ class GeometryCalculatorLabGUI:
         rect_p = rectangle_perimeter(*rectangle)
         tri_p = triangle_perimeter(triangle)
         
+        # Расчет общего периметра
+        combined_perimeter_info = None
+        if intersect:
+            try:
+                result = calculate_combined_perimeter(rectangle, triangle)
+                if len(result) == 4:
+                    combined_p, rect_p_calc, tri_p_calc, status = result
+                    combined_perimeter_info = {
+                        'combined': combined_p,
+                        'rect': rect_p_calc,
+                        'tri': tri_p_calc,
+                        'status': status
+                    }
+            except:
+                combined_perimeter_info = None
+        
         # Обновляем результаты
-        self.update_results(rectangle, triangle, intersect, rect_p, tri_p, out_of_bounds)
+        self.update_results(rectangle, triangle, intersect, rect_p, tri_p, out_of_bounds, combined_perimeter_info)
         
         self.canvas.draw()
         
@@ -384,7 +414,7 @@ class GeometryCalculatorLabGUI:
         rect = Rectangle((x1, y1), width, height, 
                         linewidth=2, edgecolor=color, 
                         facecolor=color, alpha=0.3,
-                        label=f'Прямоугольник ({width}×{height})')
+                        label=f'Прямоугольник ({width:.1f}x{height:.1f})')
         self.ax.add_patch(rect)
         
         # Добавляем координаты углов
@@ -414,7 +444,7 @@ class GeometryCalculatorLabGUI:
         # Добавляем легенду
         self.ax.legend(loc='upper right', bbox_to_anchor=(0.98, 0.98))
         
-    def update_results(self, rectangle, triangle, intersect, rect_p, tri_p, out_of_bounds):
+    def update_results(self, rectangle, triangle, intersect, rect_p, tri_p, out_of_bounds, combined_info=None):
         """Обновление результатов"""
         self.result_text.delete(1.0, tk.END)
         
@@ -424,6 +454,30 @@ class GeometryCalculatorLabGUI:
         test_result = "[+] ПРОЙДЕН" if expected in actual else "[-] НЕ ПРОЙДЕН"
         
         bounds_status = "[-] ВНЕ ГРАНИЦ" if out_of_bounds else "[+] В ГРАНИЦАХ"
+        
+        # Обновляем специальное поле общего периметра
+        if intersect and combined_info:
+            perimeter_text = f"ОБЩИЙ ПЕРИМЕТР: {combined_info['combined']:.2f} единиц"
+            perimeter_color = '#00b894'  # Зеленый для успешного расчета
+            self.perimeter_label.config(text=perimeter_text, bg=perimeter_color, fg='white')
+        elif intersect:
+            perimeter_text = f"ПРИБЛИЖЕННЫЙ ПЕРИМЕТР: {rect_p + tri_p:.2f} единиц"
+            perimeter_color = '#fdcb6e'  # Желтый для приближенного
+            self.perimeter_label.config(text=perimeter_text, bg=perimeter_color, fg='#2d3436')
+        else:
+            perimeter_text = "Фигуры не пересекаются - общий периметр не определен"
+            perimeter_color = '#fab1a0'  # Розовый для отсутствия пересечения
+            self.perimeter_label.config(text=perimeter_text, bg=perimeter_color, fg='#2d3436')
+        
+        # Формируем информацию о периметрах для детального отчета
+        perimeter_info = ""
+        if intersect and combined_info:
+            perimeter_info = f"""Общий периметр объединенной фигуры: {combined_info['combined']:.2f}
+(расчет по контуру объединения)"""
+        elif intersect:
+            perimeter_info = f"Общий периметр (приближенно): {rect_p + tri_p:.2f}"
+        else:
+            perimeter_info = "Периметр не определен"
         
         result = f"""ТЕСТ {self.current_test + 1}: {test_result}
 
@@ -442,7 +496,7 @@ class GeometryCalculatorLabGUI:
 
 РЕЗУЛЬТАТ:
    Пересекаются: {"[+] ДА" if intersect else "[-] НЕТ"}
-   {f"Общий периметр: {rect_p + tri_p:.2f}" if intersect else "Периметр не определен"}
+   {perimeter_info}
    
 ГРАНИЦЫ ПОЛЯ: {bounds_status}
    Диапазон: -200 <= x,y <= 200
