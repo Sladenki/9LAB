@@ -68,7 +68,7 @@ class GeometryCalculatorLabGUI:
                 "name": "Тест 7: Прямоугольник внутри треугольника",
                 "description": "Прямоугольник полностью внутри треугольника",
                 "rect": (-10, -10, 10, 10),
-                "triangle": ((-50, -50), (50, -50), (-50, 50)),
+                "triangle": ((30, 30), (-80, 30), (30, -80)),
                 "expected": "Пересекаются"
             },
             {
@@ -232,11 +232,11 @@ class GeometryCalculatorLabGUI:
         self.result_text.pack(fill='both', expand=True)
         
     def setup_plot_panel(self, parent):
-        """Настройка панели с графиком 600x600"""
-        plot_title = tk.Label(parent, text="ГРАФИЧЕСКОЕ ПОЛЕ 600x600 ПИКСЕЛЕЙ", 
-                             font=('Arial', 14, 'bold'),
-                             bg='white', fg='#2c3e50')
-        plot_title.pack(pady=10)
+        # """Настройка панели с графиком 600x600"""
+        # plot_title = tk.Label(parent, text="ГРАФИЧЕСКОЕ ПОЛЕ 600x600 ПИКСЕЛЕЙ", 
+        #                      font=('Arial', 14, 'bold'),
+        #                      bg='white', fg='#2c3e50')
+        # plot_title.pack(pady=10)
         
         # Создаем matplotlib фигуру строго 600x600 пикселей
         self.fig, self.ax = plt.subplots(figsize=(6, 6))  # 6x6 дюймов = 600x600 при 100 DPI
