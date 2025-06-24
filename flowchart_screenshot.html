@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Блок-схема - Скриншот</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: white;
+            padding: 30px;
+            line-height: 1.4;
+        }
+
+        .page {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #2c3e50;
+            color: white;
+            border-radius: 8px;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .flowchart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 20px;
+            border: 2px solid #34495e;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        /* Стандартные символы блок-схемы */
+        .start, .end {
+            background: #27ae60;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            text-align: center;
+            min-width: 150px;
+            font-size: 12px;
+        }
+
+        .process {
+            background: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-align: center;
+            min-width: 200px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .decision {
+            background: #f39c12;
+            color: white;
+            padding: 12px 15px;
+            text-align: center;
+            min-width: 150px;
+            position: relative;
+            font-size: 11px;
+            font-weight: 500;
+            transform: rotate(45deg);
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .decision-text {
+            transform: rotate(-45deg);
+            line-height: 1.2;
+        }
+
+        .input-output {
+            background: #9b59b6;
+            color: white;
+            padding: 10px 15px;
+            text-align: center;
+            min-width: 180px;
+            font-size: 11px;
+            font-weight: 500;
+            position: relative;
+            margin: 0 15px;
+        }
+
+        .input-output:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -10px;
+            width: 0;
+            height: 0;
+            border-top: 20px solid #9b59b6;
+            border-bottom: 20px solid #9b59b6;
+            border-left: 10px solid transparent;
+        }
+
+        .input-output:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -10px;
+            width: 0;
+            height: 0;
+            border-top: 20px solid transparent;
+            border-bottom: 20px solid transparent;
+            border-left: 10px solid #9b59b6;
+        }
+
+        .error {
+            background: #e74c3c;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-align: center;
+            min-width: 140px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .arrow {
+            font-size: 16px;
+            color: #34495e;
+            font-weight: bold;
+        }
+
+        .branch-container {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+            margin: 15px 0;
+        }
+
+        .branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .label {
+            background: #34495e;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .label.yes {
+            background: #27ae60;
+        }
+
+        .label.no {
+            background: #e74c3c;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 30px 0 15px 0;
+            text-align: center;
+            padding: 8px;
+            background: #ecf0f1;
+            border-radius: 5px;
+        }
+
+        .function-flowchart {
+            margin-top: 20px;
+            border: 2px solid #17a2b8;
+            background: #e7f3ff;
+        }
+
+        .function-block {
+            background: #17a2b8;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .loop-block {
+            background: #6c757d;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 10px;
+            border: 2px dashed #495057;
+        }
+
+        .return-block {
+            background: #28a745;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 10px;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: space-around;
+            background: #f8f9fa;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .legend-symbol {
+            width: 60px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 9px;
+            font-weight: bold;
+            border-radius: 3px;
+        }
+
+        @media print {
+            body { background: white; }
+            .page { box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- Заголовок -->
+        <div class="header">
+            <h1>БЛОК-СХЕМА ПРОГРАММЫ</h1>
+            <p>Лабораторная работа №9 - Тестирование ПО | Сахар Марк, 22-ИЭ-1, Вариант 16</p>
+        </div>
+
+        <!-- Легенда символов -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-symbol start">СТАРТ</div>
+                <span>Терминатор</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-symbol process">ПРОЦЕСС</div>
+                <span>Вычисления</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-symbol" style="background: #f39c12;">РЕШЕНИЕ</div>
+                <span>Условие</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-symbol input-output">I/O</div>
+                <span>Ввод/Вывод</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-symbol" style="background: #34495e;">→ ↓</div>
+                <span>Поток</span>
+            </div>
+        </div>
+
+        <!-- Основная блок-схема -->
+        <div class="section-title">ОСНОВНАЯ БЛОК-СХЕМА ПРОГРАММЫ</div>
+        <div class="flowchart">
+            <div class="start">НАЧАЛО</div>
+            <div class="arrow">↓</div>
+            
+            <div class="input-output">Ввод координат прямоугольника<br>(x1, y1, x2, y2)</div>
+            <div class="arrow">↓</div>
+            
+            <div class="input-output">Ввод координат треугольника<br>(вершины с катетами ∥ осям)</div>
+            <div class="arrow">↓</div>
+            
+            <div class="decision">
+                <div class="decision-text">Координаты<br>в диапазоне<br>-200..200?</div>
+            </div>
+            
+            <div class="branch-container">
+                <div class="branch">
+                    <div class="label no">НЕТ</div>
+                    <div class="arrow">↓</div>
+                    <div class="error">ОШИБКА:<br>Координаты вне границ</div>
+                    <div class="arrow">↓</div>
+                    <div class="end">КОНЕЦ</div>
+                </div>
+                
+                <div class="branch">
+                    <div class="label yes">ДА</div>
+                    <div class="arrow">↓</div>
+                    <div class="process">Вычислить периметры<br>отдельных фигур</div>
+                    <div class="arrow">↓</div>
+                    
+                    <div class="process">Вызов функции<br>triangle_rectangle_intersect()</div>
+                    <div class="arrow">↓</div>
+                    
+                    <div class="decision">
+                        <div class="decision-text">Фигуры<br>пересекаются?</div>
+                    </div>
+                    
+                    <div class="branch-container">
+                        <div class="branch">
+                            <div class="label yes">ДА</div>
+                            <div class="arrow">↓</div>
+                            <div class="process">Вычислить общий периметр<br>объединенной фигуры</div>
+                            <div class="arrow">↓</div>
+                            <div class="input-output">Вывод: Все периметры<br>+ общий периметр</div>
+                        </div>
+                        
+                        <div class="branch">
+                            <div class="label no">НЕТ</div>
+                            <div class="arrow">↓</div>
+                            <div class="input-output">Вывод: Фигуры не пересекаются<br>Общий периметр не определен</div>
+                        </div>
+                    </div>
+                    
+                    <div class="arrow">↓</div>
+                    <div class="end">КОНЕЦ</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Блок-схема функции проверки пересечения -->
+        <div class="section-title">БЛОК-СХЕМА ФУНКЦИИ triangle_rectangle_intersect()</div>
+        <div class="flowchart function-flowchart">
+            <div class="function-block">НАЧАЛО ФУНКЦИИ triangle_rectangle_intersect()</div>
+            <div class="arrow">↓</div>
+            
+            <div class="process">Инициализация переменных:<br>• Вершины прямоугольника (4 точки)<br>• Стороны треугольника (3 отрезка)<br>• Стороны прямоугольника (4 отрезка)</div>
+            <div class="arrow">↓</div>
+            
+            <div class="loop-block">ЦИКЛ 1: По вершинам треугольника (i = 0..2)</div>
+            <div class="arrow">↓</div>
+            
+            <div class="decision">
+                <div class="decision-text">Вершина<br>triangle[i]<br>внутри<br>прямоугольника?</div>
+            </div>
+            
+            <div class="branch-container">
+                <div class="branch">
+                    <div class="label yes">ДА</div>
+                    <div class="arrow">↓</div>
+                    <div class="return-block">return True</div>
+                </div>
+                
+                <div class="branch">
+                    <div class="label no">НЕТ</div>
+                    <div class="arrow">↓</div>
+                    <div class="process">i++</div>
+                    <div class="arrow">↓</div>
+                    <div class="decision">
+                        <div class="decision-text">i < 3?</div>
+                    </div>
+                    <div class="label yes">ДА → цикл</div>
+                </div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            <div class="loop-block">ЦИКЛ 2: По вершинам прямоугольника (j = 0..3)</div>
+            <div class="arrow">↓</div>
+            
+            <div class="decision">
+                <div class="decision-text">Вершина<br>rectangle[j]<br>внутри<br>треугольника?</div>
+            </div>
+            
+            <div class="branch-container">
+                <div class="branch">
+                    <div class="label yes">ДА</div>
+                    <div class="arrow">↓</div>
+                    <div class="return-block">return True</div>
+                </div>
+                
+                <div class="branch">
+                    <div class="label no">НЕТ</div>
+                    <div class="arrow">↓</div>
+                    <div class="process">j++</div>
+                    <div class="arrow">↓</div>
+                    <div class="decision">
+                        <div class="decision-text">j < 4?</div>
+                    </div>
+                    <div class="label yes">ДА → цикл</div>
+                </div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            <div class="loop-block">ВЛОЖЕННЫЕ ЦИКЛЫ:<br>k = 0..2 (стороны треугольника)<br>m = 0..3 (стороны прямоугольника)</div>
+            <div class="arrow">↓</div>
+            
+            <div class="decision">
+                <div class="decision-text">Стороны<br>пересекаются?</div>
+            </div>
+            
+            <div class="branch-container">
+                <div class="branch">
+                    <div class="label yes">ДА</div>
+                    <div class="arrow">↓</div>
+                    <div class="return-block">return True</div>
+                </div>
+                
+                <div class="branch">
+                    <div class="label no">НЕТ</div>
+                    <div class="arrow">↓</div>
+                    <div class="process">Следующая пара сторон</div>
+                    <div class="arrow">↓</div>
+                    <div class="decision">
+                        <div class="decision-text">Все пары<br>проверены?</div>
+                    </div>
+                    <div class="label no">НЕТ → цикл</div>
+                </div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            <div class="return-block">return False</div>
+            <div class="arrow">↓</div>
+            <div class="function-block">КОНЕЦ ФУНКЦИИ</div>
+        </div>
+
+        <!-- Характеристики -->
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 20px; font-size: 11px;">
+            <strong>📊 Характеристики алгоритма:</strong><br>
+            Цикломатическое число: 6 | Временная сложность: O(1) | Тестов: 9 | Покрытие ветвей: 100%
+        </div>
+    </div>
+</body>
+</html> 

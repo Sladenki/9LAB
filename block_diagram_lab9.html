@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Блок-схема - Лабораторная работа №9</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .diagram-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        h2 {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .mermaid {
+            text-align: center;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>📊 Блок-схема программы</h1>
+    <h2>Лабораторная работа №9 - Тестирование ПО<br>Сахар Марк, 22-ИЭ-1, Вариант 16</h2>
+    
+    <div class="diagram-container">
+        <h3>Основная блок-схема программы</h3>
+        <div class="mermaid">
+flowchart TD
+    A([НАЧАЛО]) --> B[/"Ввод координат прямоугольника<br/>(x1, y1, x2, y2)"/]
+    B --> C[/"Ввод координат треугольника<br/>(вершины с катетами || осям)"/]
+    C --> D{Координаты в диапазоне<br/>-200..200?}
+    
+    D -->|Нет| E[/"ОШИБКА:<br/>Координаты вне границ"/]
+    E --> F([КОНЕЦ])
+    
+    D -->|Да| G[Вычислить периметры<br/>отдельных фигур]
+    G --> H[Вызов функции<br/>triangle_rectangle_intersect]
+    H --> I{Фигуры<br/>пересекаются?}
+    
+    I -->|Да| J[Вычислить общий периметр<br/>объединенной фигуры]
+    I -->|Нет| K[/"Вывод: Фигуры не пересекаются<br/>Общий периметр не определен"/]
+    
+    J --> L[/"Вывод результатов:<br/>- Периметр прямоугольника<br/>- Периметр треугольника<br/>- Общий периметр"/]
+    
+    K --> F
+    L --> F
+    
+    style A fill:#e1f5fe
+    style F fill:#ffcdd2
+    style E fill:#ffebee
+    style J fill:#e8f5e8
+    style L fill:#e8f5e8
+        </div>
+    </div>
+
+    <div class="diagram-container">
+        <h3>Детализированная блок-схема функции triangle_rectangle_intersect()</h3>
+        <div class="mermaid">
+flowchart TD
+    START([НАЧАЛО ФУНКЦИИ<br/>triangle_rectangle_intersect]) --> INIT[Инициализация переменных:<br/>- Вершины прямоугольника<br/>- Стороны треугольника<br/>- Стороны прямоугольника]
+    
+    INIT --> LOOP1[i = 0<br/>Цикл по вершинам треугольника]
+    LOOP1 --> CHECK1{Вершина triangle[i]<br/>внутри прямоугольника?}
+    
+    CHECK1 -->|Да| RET1[return True]
+    CHECK1 -->|Нет| INC1[i++]
+    INC1 --> COND1{i < 3?}
+    COND1 -->|Да| CHECK1
+    
+    COND1 -->|Нет| LOOP2[j = 0<br/>Цикл по вершинам прямоугольника]
+    LOOP2 --> CHECK2{Вершина rectangle[j]<br/>внутри треугольника?}
+    
+    CHECK2 -->|Да| RET2[return True]
+    CHECK2 -->|Нет| INC2[j++]
+    INC2 --> COND2{j < 4?}
+    COND2 -->|Да| CHECK2
+    
+    COND2 -->|Нет| NESTED[Вложенные циклы:<br/>k = 0..2 стороны треугольника<br/>m = 0..3 стороны прямоугольника]
+    NESTED --> CHECK3{Стороны triangle[k]<br/>и rectangle[m]<br/>пересекаются?}
+    
+    CHECK3 -->|Да| RET3[return True]
+    CHECK3 -->|Нет| NEXT[Следующая пара сторон]
+    NEXT --> ALLCHECK{Все пары<br/>проверены?}
+    ALLCHECK -->|Нет| CHECK3
+    
+    ALLCHECK -->|Да| RET4[return False]
+    
+    RET1 --> END([КОНЕЦ ФУНКЦИИ])
+    RET2 --> END
+    RET3 --> END
+    RET4 --> END
+    
+    style START fill:#e3f2fd
+    style END fill:#f3e5f5
+    style RET1 fill:#c8e6c9
+    style RET2 fill:#c8e6c9
+    style RET3 fill:#c8e6c9
+    style RET4 fill:#ffcdd2
+        </div>
+    </div>
+
+    <div class="info">
+        <h3>📊 Характеристики алгоритма:</h3>
+        <ul>
+            <li><strong>Цикломатическое число:</strong> 5</li>
+            <li><strong>Временная сложность:</strong> O(1) - константная</li>
+            <li><strong>Пространственная сложность:</strong> O(1) - константная</li>
+            <li><strong>Количество тестов:</strong> 9 (превышает минимум в 5 тестов)</li>
+            <li><strong>Покрытие ветвей:</strong> 100% - все пути протестированы</li>
+        </ul>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            }
+        });
+    </script>
+</body>
+</html> 

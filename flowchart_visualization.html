@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Блок-схема программы - Лабораторная работа №9</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .header p {
+            margin: 5px 0 0 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .flowchart-section {
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #ecf0f1;
+            border-left: 5px solid #3498db;
+        }
+
+        .flowchart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            padding: 30px;
+            background: #fafafa;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+        }
+
+        /* Символы блок-схемы */
+        .terminal {
+            background: #2ecc71;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: bold;
+            text-align: center;
+            min-width: 200px;
+            box-shadow: 0 4px 8px rgba(46, 204, 113, 0.3);
+        }
+
+        .process {
+            background: #3498db;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 250px;
+            font-weight: 500;
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+        }
+
+        .decision {
+            background: #f39c12;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 200px;
+            position: relative;
+            font-weight: 500;
+            box-shadow: 0 4px 8px rgba(243, 156, 18, 0.3);
+        }
+
+        .decision:before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 10px solid #f39c12;
+        }
+
+        .decision:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid #f39c12;
+        }
+
+        .input-output {
+            background: #9b59b6;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            min-width: 220px;
+            position: relative;
+            font-weight: 500;
+            box-shadow: 0 4px 8px rgba(155, 89, 182, 0.3);
+        }
+
+        .input-output:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -15px;
+            width: 0;
+            height: 0;
+            border-top: 25px solid #9b59b6;
+            border-bottom: 25px solid #9b59b6;
+            border-left: 15px solid transparent;
+        }
+
+        .input-output:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -15px;
+            width: 0;
+            height: 0;
+            border-top: 25px solid transparent;
+            border-bottom: 25px solid transparent;
+            border-left: 15px solid #9b59b6;
+        }
+
+        .error {
+            background: #e74c3c;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 180px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+        }
+
+        .arrow {
+            font-size: 20px;
+            color: #34495e;
+            font-weight: bold;
+        }
+
+        .arrow-down::before {
+            content: '↓';
+        }
+
+        .arrow-right::before {
+            content: '→';
+        }
+
+        .arrow-left::before {
+            content: '←';
+        }
+
+        .branch-container {
+            display: flex;
+            gap: 50px;
+            align-items: flex-start;
+            margin: 20px 0;
+        }
+
+        .branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .label {
+            background: #ecf0f1;
+            color: #2c3e50;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .label.yes {
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+
+        .label.no {
+            background: #fadbd8;
+            color: #e74c3c;
+        }
+
+        /* Детализированная блок-схема */
+        .detailed-flowchart {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #dee2e6;
+            margin-top: 30px;
+        }
+
+        .function-block {
+            background: #17a2b8;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(23, 162, 184, 0.3);
+        }
+
+        .loop-block {
+            background: #6c757d;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+            border: 3px dashed #495057;
+            box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+        }
+
+        .return-block {
+            background: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+        }
+
+        .legend {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #dee2e6;
+            margin-bottom: 30px;
+        }
+
+        .legend h3 {
+            margin: 0 0 15px 0;
+            color: #2c3e50;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .legend-symbol {
+            width: 80px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Заголовок -->
+        <div class="header">
+            <h1>БЛОК-СХЕМА ПРОГРАММЫ</h1>
+            <p>Лабораторная работа №9 - Тестирование ПО</p>
+            <p>Сахар Марк, 22-ИЭ-1, Вариант 16</p>
+        </div>
+
+        <!-- Легенда -->
+        <div class="legend">
+            <h3>📋 Обозначения символов блок-схемы</h3>
+            <div class="legend-item">
+                <div class="legend-symbol terminal">ТЕРМИНАТОР</div>
+                <span>Начало/конец программы или функции</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-symbol process">ПРОЦЕСС</div>
+                <span>Вычисления, присваивания, действия</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-symbol decision">РЕШЕНИЕ</div>
+                <span>Условие, проверка, ветвление</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-symbol input-output">ВВОД/ВЫВОД</div>
+                <span>Операции ввода и вывода данных</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-symbol" style="background: #34495e;">→ ↓ ←</div>
+                <span>Направление выполнения программы</span>
+            </div>
+        </div>
+
+        <!-- Основная блок-схема -->
+        <div class="flowchart-section">
+            <div class="section-title">🔄 ОСНОВНАЯ БЛОК-СХЕМА ПРОГРАММЫ</div>
+            <div class="flowchart">
+                <div class="terminal">НАЧАЛО</div>
+                <div class="arrow arrow-down"></div>
+                
+                <div class="input-output">Ввод координат прямоугольника<br>(x1, y1, x2, y2)</div>
+                <div class="arrow arrow-down"></div>
+                
+                <div class="input-output">Ввод координат треугольника<br>(вершины с катетами || осям)</div>
+                <div class="arrow arrow-down"></div>
+                
+                <div class="decision">Координаты в диапазоне<br>-200..200?</div>
+                
+                <div class="branch-container">
+                    <div class="branch">
+                        <div class="label no">НЕТ</div>
+                        <div class="arrow arrow-down"></div>
+                        <div class="error">ОШИБКА:<br>Координаты вне границ</div>
+                        <div class="arrow arrow-down"></div>
+                        <div class="terminal">КОНЕЦ</div>
+                    </div>
+                    
+                    <div class="branch">
+                        <div class="label yes">ДА</div>
+                        <div class="arrow arrow-down"></div>
+                        <div class="process">Вычислить периметры<br>отдельных фигур</div>
+                        <div class="arrow arrow-down"></div>
+                        
+                        <div class="process">Вызов функции<br>triangle_rectangle_intersect()</div>
+                        <div class="arrow arrow-down"></div>
+                        
+                        <div class="decision">Фигуры<br>пересекаются?</div>
+                        
+                        <div class="branch-container">
+                            <div class="branch">
+                                <div class="label yes">ДА</div>
+                                <div class="arrow arrow-down"></div>
+                                <div class="process">Вычислить общий периметр<br>объединенной фигуры</div>
+                                <div class="arrow arrow-down"></div>
+                                <div class="input-output">Вывод: Все периметры<br>+ общий периметр</div>
+                            </div>
+                            
+                            <div class="branch">
+                                <div class="label no">НЕТ</div>
+                                <div class="arrow arrow-down"></div>
+                                <div class="input-output">Вывод: Фигуры не пересекаются<br>Общий периметр не определен</div>
+                            </div>
+                        </div>
+                        
+                        <div class="arrow arrow-down"></div>
+                        <div class="terminal">КОНЕЦ</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Детализированная блок-схема функции -->
+        <div class="flowchart-section">
+            <div class="section-title">🔍 БЛОК-СХЕМА ФУНКЦИИ triangle_rectangle_intersect()</div>
+            <div class="detailed-flowchart">
+                <div class="flowchart">
+                    <div class="function-block">НАЧАЛО ФУНКЦИИ<br>triangle_rectangle_intersect()</div>
+                    <div class="arrow arrow-down"></div>
+                    
+                    <div class="process">Инициализация переменных:<br>• Вершины прямоугольника (4 точки)<br>• Стороны треугольника (3 отрезка)<br>• Стороны прямоугольника (4 отрезка)</div>
+                    <div class="arrow arrow-down"></div>
+                    
+                    <div class="loop-block">ЦИКЛ 1: По вершинам треугольника (i = 0..2)</div>
+                    <div class="arrow arrow-down"></div>
+                    
+                    <div class="decision">Вершина triangle[i]<br>внутри прямоугольника?</div>
+                    
+                    <div class="branch-container">
+                        <div class="branch">
+                            <div class="label yes">ДА</div>
+                            <div class="arrow arrow-down"></div>
+                            <div class="return-block">return True</div>
+                        </div>
+                        
+                        <div class="branch">
+                            <div class="label no">НЕТ</div>
+                            <div class="arrow arrow-down"></div>
+                            <div class="process">i++</div>
+                            <div class="arrow arrow-down"></div>
+                            <div class="decision">i < 3?</div>
+                            <div class="label yes">ДА → цикл</div>
+                        </div>
+                    </div>
+                    
+                    <div class="arrow arrow-down"></div>
+                    <div class="loop-block">ЦИКЛ 2: По вершинам прямоугольника (j = 0..3)</div>
+                    <div class="arrow arrow-down"></div>
+                    
+                    <div class="decision">Вершина rectangle[j]<br>внутри треугольника?</div>
+                    
+                    <div class="branch-container">
+                        <div class="branch">
+                            <div class="label yes">ДА</div>
+                            <div class="arrow arrow-down"></div>
+                            <div class="return-block">return True</div>
+                        </div>
+                        
+                        <div class="branch">
+                            <div class="label no">НЕТ</div>
+                            <div class="arrow arrow-down"></div>
+                            <div class="process">j++</div>
+                            <div class="arrow arrow-down"></div>
+                            <div class="decision">j < 4?</div>
+                            <div class="label yes">ДА → цикл</div>
+                        </div>
+                    </div>
+                    
+                    <div class="arrow arrow-down"></div>
+                    <div class="loop-block">ВЛОЖЕННЫЕ ЦИКЛЫ:<br>k = 0..2 (стороны треугольника)<br>m = 0..3 (стороны прямоугольника)</div>
+                    <div class="arrow arrow-down"></div>
+                    
+                    <div class="decision">Стороны<br>пересекаются?</div>
+                    
+                    <div class="branch-container">
+                        <div class="branch">
+                            <div class="label yes">ДА</div>
+                            <div class="arrow arrow-down"></div>
+                            <div class="return-block">return True</div>
+                        </div>
+                        
+                        <div class="branch">
+                            <div class="label no">НЕТ</div>
+                            <div class="arrow arrow-down"></div>
+                            <div class="process">Следующая пара сторон</div>
+                            <div class="arrow arrow-down"></div>
+                            <div class="decision">Все пары проверены?</div>
+                            <div class="label no">НЕТ → цикл</div>
+                        </div>
+                    </div>
+                    
+                    <div class="arrow arrow-down"></div>
+                    <div class="return-block">return False</div>
+                    <div class="arrow arrow-down"></div>
+                    <div class="function-block">КОНЕЦ ФУНКЦИИ</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информационный блок -->
+        <div class="legend">
+            <h3>📊 Характеристики алгоритма</h3>
+            <p><strong>Цикломатическое число:</strong> 6</p>
+            <p><strong>Временная сложность:</strong> O(1) - константная</p>
+            <p><strong>Пространственная сложность:</strong> O(1) - константная</p>
+            <p><strong>Количество тестов:</strong> 9 (превышает минимум в 6 тестов)</p>
+            <p><strong>Покрытие ветвей:</strong> 100% - все пути протестированы</p>
+        </div>
+    </div>
+</body>
+</html> 

@@ -77,6 +77,13 @@ class GeometryCalculatorLabGUI:
                 "rect": (0, -30, 0, 30),
                 "triangle": ((-20, -10), (20, -10), (-20, 10)),
                 "expected": "Пересекаются"
+            },
+            {
+                "name": "Тест 9: ВАРИАНТ ИЗ ЗАДАНИЯ",
+                "description": "Прямоугольник и прямоугольный треугольник с катетами, параллельными осям координат (по варианту)",
+                "rect": (-60, -40, 40, 30),
+                "triangle": ((-50, 20), (30, 20), (-50, -30)),
+                "expected": "Пересекаются"
             }
         ]
         
@@ -92,13 +99,13 @@ class GeometryCalculatorLabGUI:
         title_frame.pack_propagate(False)
         
         title_label = tk.Label(title_frame, 
-                              text="*** ЛАБОРАТОРНАЯ РАБОТА №9: ТЕСТИРОВАНИЕ ПО ***", 
+                              text="ЛАБОРАТОРНАЯ РАБОТА №9: ТЕСТИРОВАНИЕ ПО", 
                               font=('Arial', 16, 'bold'),
                               bg='#2c3e50', fg='white')
         title_label.pack(expand=True)
         
         subtitle_label = tk.Label(title_frame,
-                                 text="Поле 600x600 пикселей, координаты от -200 до 200, центр в центре",
+                                 text="Сахар Марк, 22-ИЭ-1, Вар 16",
                                  font=('Arial', 10),
                                  bg='#2c3e50', fg='#ecf0f1')
         subtitle_label.pack()
